@@ -104,10 +104,16 @@ def enroll(request, course_id):
     return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course.id,)))
 
 
-def submit(request, course_id):
-    model = Course
-    template_name = 'onlinecourse/course_detail_bootstrap.html'
-
+def submit(request, user, course_id):
+    Enrollment.objects.get(user=user, course=course_id)
+    Submission.objects.create(enrollment=user)
+    submitted_anwsers = []
+    for key in request.POST:
+        if key.startswith('choice'):
+            value = request.POST[key]
+            choice_id = int(value)
+            submitted_anwsers.append(choice_id)
+    return submitted_anwsers
 
 def extract_answers(request):
     submitted_anwsers = []
